@@ -1,0 +1,9 @@
+{
+  "name": "master-developer",
+  "version": "1.0.0",
+  "description": "Master Developer para orquestração de tarefas de software e seleção de Skills especializadas.",
+  "author": {
+    "name": "Renato"
+  },
+  "license": "MIT"
+}
