@@ -1,145 +1,65 @@
 # Renato Claude Toolkit
 
-Kit para compartilhar o ambiente de desenvolvimento do Claude Code.
+Marketplace pessoal para o Claude Code. A Master Developer v2 coordena pedidos compostos, consulta um catálogo das capacidades instaladas e registra continuidade em Markdown nos projetos que adotarem essa opção.
 
-## O que já vem neste pacote
+## O que vem no repositório
 
-- `master-developer`: Skill própria de orquestração.
-- Regra global opcional em `global/CLAUDE.md`.
-- Marketplace local pronto para teste.
-- Scripts PowerShell para instalação e captura do inventário de Plugins.
+- `plugins/master-developer/`: skill de orquestração, regras de roteamento e coletor de metadados em Python 3.10+.
+- `.claude-plugin/marketplace.json`: catálogo do marketplace.
+- `global/CLAUDE.md`: orientação global opcional e curta.
+- `templates/project-memory/`: exemplo de memória por projeto.
+- `scripts/`: instalação e exportação do inventário de plugins.
 
-## Estrutura
+A Master não incorpora plugins de terceiros. Ela descobre metadados da instalação presente. Um candidato encontrado no catálogo ainda precisa estar exposto na sessão para ser invocado. O coletor não executa hooks, agentes ou MCPs.
 
-```text
-renato-claude-toolkit/
-├── .claude-plugin/
-│   └── marketplace.json
-├── plugins/
-│   └── master-developer/
-│       ├── .claude-plugin/plugin.json
-│       └── skills/master-developer/SKILL.md
-├── global/
-│   └── CLAUDE.md
-└── scripts/
-    ├── install-kit.ps1
-    ├── install-known-plugins.ps1
-    └── export-installed-plugins.ps1
-```
+## Teste local antes de instalar
 
-## Testar localmente
-
-No PowerShell:
+Na raiz deste repositório:
 
 ```powershell
-claude plugin marketplace add .
-enato-claude-toolkit
-claude plugin install master-developer@renato-claude-toolkit
+claude plugin validate .
+claude plugin validate ./plugins/master-developer
+claude --plugin-dir ./plugins/master-developer
+python -m unittest discover -s tests -v
 ```
 
-Depois:
+Na sessão, experimente `/master-developer:master-developer`. O uso de `--plugin-dir` vale somente para essa sessão; ele pode testar uma cópia local com o mesmo nome de um plugin já instalado. Consulte a [documentação oficial de plugins](https://code.claude.com/docs/en/plugins) para as regras de precedência.
 
-```text
-/skills
-```
+## Instalação e atualização
 
-A Skill deve aparecer como:
-
-```text
-master-developer
-```
-
-## Compartilhar com seu amigo
-
-Depois de colocar este diretório em um repositório GitHub, seu amigo poderá usar:
-
-```text
-/plugin marketplace add SEU_USUARIO/renato-claude-toolkit
-/plugin install master-developer@renato-claude-toolkit
-```
-
-O marketplace é o mecanismo oficial do Claude Code para distribuir Plugins. O repositório do marketplace precisa conter `.claude-plugin/marketplace.json`.
-
-## Plugins de terceiros
-
-O inventário enviado pelo usuário confirmou **7 Plugins habilitados** no ambiente de origem: `deep-research`, `document-skills`, `frontend-design`, `pm-skills`, `reflexion`, `security-guidance` e `superpowers`. Os IDs completos e versões estavam no snapshot. fileciteturn0file0L3-L8
-
-O instalador desta versão usa os IDs exatos do snapshot:
-
-```text
-deep-research@claude-community
-document-skills@anthropic-agent-skills
-frontend-design@claude-plugins-official
-pm-skills@claude-code-skills
-reflexion@context-engineering-kit
-security-guidance@claude-plugins-official
-superpowers@claude-plugins-official
-```
-
-As versões registradas no snapshot incluem Deep Research 1.3.1, PM Skills 2.11.1, Reflexion 3.0.0, Security Guidance 2.0.7 e Superpowers 6.3.0; Frontend Design aparece como `unknown` no inventário. fileciteturn0file0L3-L8 fileciteturn0file0L30-L36 fileciteturn0file0L45-L50 fileciteturn0file0L54-L60 fileciteturn0file0L63-L69
-
-**Importante:** o kit não copia o conteúdo interno desses Plugins de terceiros. Ele registra/reinstala os Plugins pelas suas origens. Isso permite que cada Plugin continue sendo mantido pelo respectivo autor/marketplace.
-
-O `pm-skills` do snapshot também declara um servidor MCP Atlassian; instalar o Plugin não significa necessariamente que seu amigo estará autenticado na conta Atlassian. O snapshot apenas registra que esse MCP existe no Plugin instalado. fileciteturn0file0L30-L40
-
-## Capturar exatamente os Plugins do seu computador
-
-Execute:
+Depois de publicar esta versão no repositório do marketplace:
 
 ```powershell
-.\scripts\export-installed-plugins.ps1
+claude plugin marketplace update renato-claude-toolkit
+claude plugin update master-developer@renato-claude-toolkit --scope user
 ```
 
-ou:
+Em uma instalação nova:
 
 ```powershell
-claude plugin list --json > plugin-snapshot.json
+claude plugin marketplace add renatomoraeeees/renato-claude-toolkit
+claude plugin install master-developer@renato-claude-toolkit --scope user
 ```
 
-O Claude Code fornece oficialmente `claude plugin list --json` para listar Plugins instalados, versão, marketplace de origem e status.
+Recarregue os plugins ou inicie outra sessão. O identificador para invocação explícita é `/master-developer:master-developer`. A versão do plugin é definida em `plugins/master-developer/.claude-plugin/plugin.json`; incremente esse campo a cada lançamento para que o Claude Code detecte a atualização. O cache em `~/.claude/plugins/cache` é gerenciado pelo Claude Code e não deve ser editado manualmente. Veja a [referência de versionamento](https://code.claude.com/docs/en/plugins-reference).
 
-## Regra global
+## Catálogo e memória
 
-Plugins não carregam um `CLAUDE.md` na raiz do Plugin como contexto global. Se você quiser o comportamento global de "sempre informar Skills", copie o conteúdo de:
-
-```text
-global/CLAUDE.md
-```
-
-para:
-
-```text
-$HOME\.claude\CLAUDE.md
-```
-
-A `master-developer` continua sendo a Skill especializada.
-
-## Publicação no GitHub
-
-Depois de criar um repositório vazio no GitHub:
+Para criar ou atualizar o catálogo de um projeto:
 
 ```powershell
-cd .
-enato-claude-toolkit
-git init
-git add .
-git commit -m "feat: initial Claude Code toolkit"
-git branch -M main
-git remote add origin https://github.com/SEU_USUARIO/renato-claude-toolkit.git
-git push -u origin main
+python plugins/master-developer/scripts/catalog.py refresh --project .
+python plugins/master-developer/scripts/catalog.py search --project . --query "saúde orçamento cronograma"
 ```
 
-Substitua `SEU_USUARIO` pelo seu usuário do GitHub.
+O catálogo local contém caminhos e metadados da instalação; não o publique. Um índice Markdown pequeno permite consultar somente as páginas relevantes. A Master distingue capacidade instalada, anunciada na sessão e efetivamente invocada.
 
-## Atualizações
+Para continuidade, use [o modelo por projeto](templates/project-memory/CLAUDE.md). Ele grava estado em `memory/` após marcos relevantes e o relê na sessão seguinte. Configure permissão de escrita apenas para esse diretório quando rodar o Claude Code sem perguntas. Claude-Mem, ECC e memória nativa podem coexistir como fontes; atribua um único responsável pela camada Markdown curada e evite hooks duplicados.
 
-Quando você alterar a Master:
+## Limites do ensaio
 
-1. edite `plugins/master-developer/skills/master-developer/SKILL.md`;
-2. incremente a versão em `plugin.json` e `marketplace.json`;
-3. faça commit/push;
-4. seu amigo pode atualizar o marketplace e o Plugin.
+A versão v2 foi testada com uma instalação que continha 15 plugins e centenas de skills. Um piloto restrito carregou apenas a Master e PM Skills: confirmou invocação do especialista, gravação do estado Markdown e retomada em sessão separada. Esse ensaio não confirma comportamento simultâneo de todos os plugins, saúde de MCPs e hooks, nem instalação global.
 
-## Segurança
+## Manutenção
 
-Só instale Plugins e marketplaces de fontes confiáveis. Plugins podem executar código com as permissões do usuário.
+Atualize o plugin, valide o marketplace, aumente a versão de `plugin.json` e revise o efeito sobre o catálogo. Não copie configurações globais automaticamente: o arquivo `global/CLAUDE.md` é opcional e deve ser incorporado às regras existentes sem sobrescrevê-las.

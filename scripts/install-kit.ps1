@@ -1,18 +1,20 @@
-# Renato Claude Toolkit - instalação
-$ErrorActionPreference = "Stop"
+# Renato Claude Toolkit - instalação e atualização
+param([switch]$Update)
+$ErrorActionPreference = 'Stop'
+$pluginId = 'master-developer@renato-claude-toolkit'
 
-Write-Host "== Renato Claude Toolkit ==" -ForegroundColor Cyan
-Write-Host "1) Adicionando marketplace local..."
-claude plugin marketplace add "$PSScriptRoot\.." --scope user
+if ($Update) {
+    & claude plugin marketplace update renato-claude-toolkit
+    if ($LASTEXITCODE -ne 0) { throw 'Falha ao atualizar o marketplace.' }
+    & claude plugin update $pluginId --scope user
+    if ($LASTEXITCODE -ne 0) { throw 'Falha ao atualizar a Master Developer.' }
+} else {
+    $marketplacePath = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..')).Path
+    & claude plugin marketplace add $marketplacePath --scope user
+    if ($LASTEXITCODE -ne 0) { throw 'Falha ao adicionar o marketplace.' }
+    & claude plugin install $pluginId --scope user
+    if ($LASTEXITCODE -ne 0) { throw 'Falha ao instalar a Master Developer.' }
+}
 
-Write-Host "2) Instalando Master Developer..."
-claude plugin install master-developer@renato-claude-toolkit --scope user
-
-Write-Host ""
-Write-Host "Master Developer instalada." -ForegroundColor Green
-Write-Host "Para aplicar a regra global opcional, copie:"
-Write-Host "  $PSScriptRoot\..\global\CLAUDE.md"
-Write-Host "para:"
-Write-Host "  $HOME\.claude\CLAUDE.md"
-Write-Host ""
-Write-Host "Depois reinicie o Claude Code ou use /reload-plugins."
+Write-Output 'Concluído. Recarregue os plugins ou abra uma nova sessão.'
+Write-Output 'As regras globais são opcionais. Integre global/CLAUDE.md manualmente, sem sobrescrever seu arquivo existente.'

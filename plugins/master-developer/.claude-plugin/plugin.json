@@ -1,9 +1,7 @@
 {
   "name": "master-developer",
-  "version": "1.0.0",
-  "description": "Master Developer para orquestração de tarefas de software e seleção de Skills especializadas.",
-  "author": {
-    "name": "Renato"
-  },
+  "version": "2.0.3",
+  "description": "Orquestração por capacidades verificadas, composição de especialistas e continuidade do projeto.",
+  "author": { "name": "Renato" },
   "license": "MIT"
 }
