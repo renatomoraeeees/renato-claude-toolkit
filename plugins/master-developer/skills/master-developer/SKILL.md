@@ -1,13 +1,16 @@
 ---
 name: master-developer
-description: Coordena tarefas com várias etapas ou especialidades e diagnostica skills/plugins não acionados. Use para orquestrar implementação, pesquisa, revisão ou documentos, preservando o escopo solicitado.
+description: Use automaticamente em tarefas de desenvolvimento de software, como implementar ou revisar código, corrigir bugs, refatorar, definir arquitetura, criar frontend, backend, APIs, testes, automações e documentação técnica. Coordena o trabalho ponta a ponta e invoca pela tool Skill os especialistas pertinentes; também diagnostica skills e plugins que não foram acionados.
+disable-model-invocation: false
 ---
 
-# Master Developer v2
+# Master Developer v2.1.1
 
 Coordene o trabalho usando capacidades verificadas no ambiente atual. Mantenha o objetivo, as restrições e as autorizações do usuário durante todas as etapas.
 
 Ao receber este conteúdo por invocação, a Master já está carregada. Não invoque `master-developer:master-developer` novamente para cumprir o mesmo pedido. Referências são leituras auxiliares, não novas invocações da coordenadora.
+
+O catálogo somente descobre candidatos. Sempre que selecionar outra skill aplicável, invoque-a de verdade com a tool `Skill` antes de usar suas instruções. Mencionar a skill, encontrá-la no catálogo, ler seu `SKILL.md` diretamente ou escrever um comando `/plugin:skill` no chat não substitui essa chamada.
 
 ## 1. Definir a entrega
 
@@ -28,7 +31,7 @@ Ao relatar disponibilidade, use estados distintos: **catalogada** (arquivo/metad
 - Para cada capacidade necessária, confira: visibilidade na sessão, forma de invocação, restrições, dependências e resultado esperado.
 - Respeite entradas exclusivamente manuais. Não leia seu corpo para contornar uma restrição de invocação automática e executar o fluxo sem o acionamento exigido.
 - Consulte `references/routing.md` para composição e diagnóstico. Seus exemplos não são uma lista fechada de capacidades permitidas.
-- Leia ou invoque a entrada selecionada antes de aplicar suas instruções. Mencionar o nome não significa carregá-la.
+- Skills selecionadas devem ser invocadas pela tool `Skill`; leitura direta é permitida apenas para referências que a própria skill já carregada indicar. Mencionar o nome não significa carregá-la.
 - Se houver um índice local, use-o como pista datada. A presença de um arquivo no cache ou em um snapshot não comprova disponibilidade na sessão.
 - Havendo divergência, examine a origem e os manifests relevantes, restrições e estado de recarga. Registre o que está disponível, ausente ou não verificado; não invente ferramentas.
 
@@ -50,11 +53,24 @@ Antes de aplicar outro fluxo de trabalho, confira sua compatibilidade com as ins
 
 Não peça nova autorização para carregar skills ou realizar etapas já autorizadas. Isso não amplia o escopo para instalação, publicação, envio de mensagens ou mudanças externas não autorizadas.
 
-## 4. Executar e verificar
+## 4. Invocar skills selecionadas
+
+Para cada candidata escolhida que seja uma skill anunciada na sessão e permita invocação pelo modelo:
+
+1. Chame a tool `Skill` usando no campo `skill` o identificador qualificado exatamente como exposto pela sessão, por exemplo `superpowers:systematic-debugging`. Passe `args` somente quando a interface da tool e a skill aceitarem argumentos úteis.
+2. Aguarde o resultado da chamada. Considere a skill carregada apenas quando a tool confirmar sucesso.
+3. Aplique as instruções retornadas à etapa correspondente e continue a execução. Invocar não basta: produza e verifique o entregável solicitado.
+4. Registre para a entrega se a invocação teve sucesso ou qual falha concreta ocorreu.
+
+Se a tool `Skill` não estiver disponível, o identificador não estiver anunciado ou a chamada falhar, não simule a invocação lendo arquivos do plugin. Continue com as capacidades realmente disponíveis quando isso for seguro e informe a limitação material. Não substitua uma skill exclusivamente manual por uma invocação automática.
+
+O uso da tool `Skill` é obrigatório para skills selecionadas. O catálogo não executa skills, e sua saída nunca é evidência de que uma candidata foi carregada.
+
+## 5. Executar e verificar
 
 Informe brevemente as capacidades escolhidas e o motivo. Acrescente novas escolhas quando surgirem, sem repetir o catálogo inteiro.
 
-Use o identificador observado na sessão. Resolva referências e scripts a partir da origem real da skill/plugin; não presuma que o projeto consumidor contém o monorepositório do autor.
+Use o identificador observado na sessão. Após a invocação bem-sucedida pela tool `Skill`, resolva referências e scripts conforme as instruções carregadas e a origem real da skill/plugin; não presuma que o projeto consumidor contém o monorepositório do autor.
 
 Um hook é acionado pelo evento configurado; não tente chamá-lo como skill. Um MCP requer ferramenta acessível e conexão válida. Um agent tem contexto e ferramentas próprios; forneça-lhe os materiais necessários somente quando delegação estiver autorizada.
 
@@ -62,13 +78,13 @@ Registre o resultado da invocação. Em caso de falha, diferencie indisponibilid
 
 Verifique o resultado com os checks pertinentes ao projeto e ao tipo de artefato. Testes aprovados não comprovam aspectos que não mediram. Corrija problemas demonstrados e não repita revisões equivalentes sem motivo.
 
-## 5. Preservar continuidade
+## 6. Preservar continuidade
 
 Se o projeto adotou memória, siga `references/memory.md`. Identifique mecanismos já configurados, como Claude-Mem, ECC ou memória nativa, antes de propor novos hooks. Atualize o estado em marcos significativos, sem depender exclusivamente de um evento no fim da sessão. Registre fatos e decisões com evidência; hipóteses continuam identificadas como hipóteses.
 
 Após compactação ou retomada, confira o objetivo vigente, o estado salvo e os arquivos atuais antes de continuar. Revalide capacidades necessárias quando o ambiente mudar.
 
-## 6. Entregar
+## 7. Entregar
 
 Resuma o resultado, as verificações realizadas e as limitações restantes. Relate como usadas apenas as capacidades efetivamente carregadas/aplicadas. Se relevante, indique onde a memória mudou.
 

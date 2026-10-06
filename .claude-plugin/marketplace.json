@@ -1,8 +1,8 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "renato-claude-toolkit",
-  "description": "Toolkit pessoal do Renato para Claude Code: Master Developer, orquestração de Skills e instalação assistida de plugins.",
-  "version": "2.0.3",
+  "description": "Toolkit pessoal do Renato para Claude Code: Master Developer, orquestração e invocação efetiva de Skills.",
+  "version": "2.1.1",
   "owner": {
     "name": "Renato"
   },
@@ -10,7 +10,7 @@
     {
       "name": "master-developer",
       "source": "./plugins/master-developer",
-      "description": "Orquestra tarefas por capacidades verificadas, combina especialistas e registra continuidade do projeto.",
+      "description": "Aciona automaticamente em desenvolvimento, invoca especialistas pela tool Skill e coordena a entrega ponta a ponta.",
       "author": {
         "name": "Renato"
       },

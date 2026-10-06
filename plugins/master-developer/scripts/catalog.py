@@ -16,7 +16,7 @@ import sys
 import tempfile
 import unicodedata
 
-VERSION = '2.0.2'
+VERSION = '2.1.1'
 FIELDS = {'name', 'description', 'when_to_use', 'disable-model-invocation',
           'user-invocable', 'context'}
 BOOLS = {'true': True, 'yes': True, 'on': True, '1': True,

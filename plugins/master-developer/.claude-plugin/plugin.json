@@ -1,7 +1,7 @@
 {
   "name": "master-developer",
-  "version": "2.0.3",
-  "description": "Orquestração por capacidades verificadas, composição de especialistas e continuidade do projeto.",
+  "version": "2.1.1",
+  "description": "Orquestração de desenvolvimento com auto-trigger e invocação real de especialistas pela tool Skill.",
   "author": { "name": "Renato" },
   "license": "MIT"
 }
